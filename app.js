@@ -187,10 +187,19 @@ searchInput.addEventListener('input', (e) => {
     renderEntries();
 });
 
+// Auto-Update für Service Worker erzwingen
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js')
-        .then(() => console.log('Service Worker aktiv'))
-        .catch(err => console.error('SW Fehler:', err));
+    navigator.serviceWorker.register('./sw.js').then((reg) => {
+        reg.update(); // Aktiv nach neuem SW suchen
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+            refreshing = true;
+            window.location.reload(); // Seite automatisch neu laden, sobald Update aktiv ist
+        }
+    });
 }
 
 renderEntries();

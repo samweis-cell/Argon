@@ -213,7 +213,6 @@ h1 {
     line-height: 1.4;
 }
 
-/* Vokabel-Versteck-Effekt */
 .vocab-hidden {
     filter: blur(6px);
     user-select: none;
@@ -227,7 +226,6 @@ h1 {
     font-style: italic;
 }
 
-/* Buttons & Modal */
 .primary-btn {
     background-color: var(--primary);
     color: white;

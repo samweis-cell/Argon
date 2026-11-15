@@ -1,4 +1,4 @@
-const CACHE_NAME = 'schulhub-v1.0.1';
+const CACHE_NAME = 'schulhub-v1.0.2';
 const ASSETS = [
     './',
     './index.html',
@@ -20,12 +20,20 @@ self.addEventListener('activate', (e) => {
             return Promise.all(
                 keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
             );
-        })
+        }).then(() => self.clients.claim())
     );
 });
 
+// Network-First: Immer zuerst frische Dateien vom Server holen, Offline-Cache nur als Fallback
 self.addEventListener('fetch', (e) => {
     e.respondWith(
-        caches.match(e.request).then((res) => res || fetch(e.request))
+        fetch(e.request)
+            .then((res) => {
+                const resClone = res.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(e.request, resClone));
+                return res;
+            })
+            .catch(() => caches.match(e.request))
     );
 });
+
