@@ -1,4 +1,3 @@
-// Standard-Datenbank (kannst du hier direkt im Code erweitern oder über die App hinzufügen)
 const defaultData = [
     {
         id: 1,
@@ -42,7 +41,6 @@ const defaultData = [
     }
 ];
 
-// Daten aus localStorage laden oder Standarddaten nutzen
 let entries = JSON.parse(localStorage.getItem('schulhub_data')) || defaultData;
 let currentSubject = 'alle';
 let searchQuery = '';
@@ -51,11 +49,16 @@ const contentGrid = document.getElementById('content-grid');
 const searchInput = document.getElementById('search-input');
 const tabs = document.querySelectorAll('.tab');
 const modal = document.getElementById('modal');
+const modalTitle = document.getElementById('modal-title');
 const addBtn = document.getElementById('add-btn');
 const closeModal = document.getElementById('close-modal');
 const entryForm = document.getElementById('entry-form');
+const entryIdInput = document.getElementById('entry-id');
 
-// Karten rendern
+function saveData() {
+    localStorage.setItem('schulhub_data', JSON.stringify(entries));
+}
+
 function renderEntries() {
     contentGrid.innerHTML = '';
 
@@ -77,32 +80,99 @@ function renderEntries() {
         const card = document.createElement('div');
         card.className = 'card';
 
+        const headerHTML = `
+            <div class="card-header">
+                <span class="card-badge">${item.subject} • ${item.type === 'vocab' ? 'Vokabel' : 'Formel'}</span>
+                <div class="card-actions">
+                    <button class="icon-btn edit-btn" title="Bearbeiten">✏️</button>
+                    <button class="icon-btn delete-btn" title="Löschen">🗑️</button>
+                </div>
+            </div>
+        `;
+
         if (item.type === 'vocab') {
             card.innerHTML = `
-                <span class="card-badge">${item.subject} • Vokabel</span>
+                ${headerHTML}
                 <div class="card-front">${item.front}</div>
                 <div class="card-back vocab-hidden">${item.back}</div>
                 <div class="card-details vocab-hidden">${item.details}</div>
                 <div class="hint-text">Tippen zum Aufdecken</div>
             `;
-            // Klick deckt Vokabel auf/zu
-            card.addEventListener('click', () => {
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.card-actions')) return;
                 card.querySelectorAll('.vocab-hidden').forEach(el => el.classList.toggle('vocab-hidden'));
             });
         } else {
             card.innerHTML = `
-                <span class="card-badge">${item.subject} • Formel</span>
+                ${headerHTML}
                 <div class="card-back" style="font-weight: 600;">${item.back}</div>
                 <div class="formula-box">${item.front}</div>
                 <div class="card-details">${item.details}</div>
             `;
         }
 
+        card.querySelector('.edit-btn').addEventListener('click', () => openEditModal(item));
+        card.querySelector('.delete-btn').addEventListener('click', () => deleteEntry(item.id));
+
         contentGrid.appendChild(card);
     });
 }
 
-// Filter & Suche Events
+function deleteEntry(id) {
+    if (confirm('Möchtest du diesen Eintrag wirklich löschen?')) {
+        entries = entries.filter(item => item.id !== id);
+        saveData();
+        renderEntries();
+    }
+}
+
+function openEditModal(item) {
+    modalTitle.textContent = 'Eintrag bearbeiten';
+    entryIdInput.value = item.id;
+    document.getElementById('entry-subject').value = item.subject;
+    document.getElementById('entry-type').value = item.type;
+    document.getElementById('entry-front').value = item.front;
+    document.getElementById('entry-back').value = item.back;
+    document.getElementById('entry-details').value = item.details;
+    modal.classList.remove('hidden');
+}
+
+addBtn.addEventListener('click', () => {
+    modalTitle.textContent = 'Neuer Eintrag';
+    entryForm.reset();
+    entryIdInput.value = '';
+    modal.classList.remove('hidden');
+});
+
+closeModal.addEventListener('click', () => modal.classList.add('hidden'));
+
+entryForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const editId = entryIdInput.value;
+
+    const entryData = {
+        id: editId ? Number(editId) : Date.now(),
+        subject: document.getElementById('entry-subject').value,
+        type: document.getElementById('entry-type').value,
+        front: document.getElementById('entry-front').value,
+        back: document.getElementById('entry-back').value,
+        details: document.getElementById('entry-details').value
+    };
+
+    if (editId) {
+        const index = entries.findIndex(item => item.id === Number(editId));
+        if (index !== -1) entries[index] = entryData;
+    } else {
+        entries.unshift(entryData);
+    }
+
+    saveData();
+    entryForm.reset();
+    entryIdInput.value = '';
+    modal.classList.add('hidden');
+    renderEntries();
+});
+
 tabs.forEach(tab => {
     tab.addEventListener('click', () => {
         tabs.forEach(t => t.classList.remove('active'));
@@ -117,34 +187,10 @@ searchInput.addEventListener('input', (e) => {
     renderEntries();
 });
 
-// Modal Steuerung
-addBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-closeModal.addEventListener('click', () => modal.classList.add('hidden'));
-
-entryForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const newEntry = {
-        id: Date.now(),
-        subject: document.getElementById('entry-subject').value,
-        type: document.getElementById('entry-type').value,
-        front: document.getElementById('entry-front').value,
-        back: document.getElementById('entry-back').value,
-        details: document.getElementById('entry-details').value
-    };
-
-    entries.unshift(newEntry);
-    localStorage.setItem('schulhub_data', JSON.stringify(entries));
-    entryForm.reset();
-    modal.classList.add('hidden');
-    renderEntries();
-});
-
-// Service Worker für PWA registrieren
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js')
         .then(() => console.log('Service Worker aktiv'))
         .catch(err => console.error('SW Fehler:', err));
 }
 
-// Initiales Laden
 renderEntries();
