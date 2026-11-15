@@ -1,10 +1,12 @@
-const CACHE_NAME = 'schulhub-v1.0.2';
+const CACHE_NAME = 'argon-v1.0.3';
 const ASSETS = [
     './',
     './index.html',
     './style.css',
     './app.js',
-    './manifest.json'
+    './manifest.json',
+    'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css',
+    'https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js'
 ];
 
 self.addEventListener('install', (e) => {
@@ -24,7 +26,6 @@ self.addEventListener('activate', (e) => {
     );
 });
 
-// Network-First: Immer zuerst frische Dateien vom Server holen, Offline-Cache nur als Fallback
 self.addEventListener('fetch', (e) => {
     e.respondWith(
         fetch(e.request)
@@ -36,4 +37,3 @@ self.addEventListener('fetch', (e) => {
             .catch(() => caches.match(e.request))
     );
 });
-

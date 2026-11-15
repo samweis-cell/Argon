@@ -19,7 +19,7 @@ const defaultData = [
         id: 3,
         subject: "mathe",
         type: "formula",
-        front: "x₁,₂ = -p/2 ± √((p/2)² - q)",
+        front: "x_{1,2} = -\\frac{p}{2} \\pm \\sqrt{\\left(\\frac{p}{2}\\right)^2 - q}",
         back: "p-q-Formel (Quadratische Gleichungen)",
         details: "Löst Gleichungen der Form: x² + px + q = 0"
     },
@@ -27,7 +27,7 @@ const defaultData = [
         id: 4,
         subject: "physik",
         type: "formula",
-        front: "F = m · a",
+        front: "F = m \\cdot a",
         back: "2. Newtonsches Gesetz (Grundgleichung der Mechanik)",
         details: "F = Kraft [N], m = Masse [kg], a = Beschleunigung [m/s²]"
     },
@@ -35,13 +35,13 @@ const defaultData = [
         id: 5,
         subject: "chemie",
         type: "formula",
-        front: "n = m / M",
+        front: "n = \\frac{m}{M}",
         back: "Stoffmenge berechnen",
         details: "n = Stoffmenge [mol], m = Masse [g], M = Molare Masse [g/mol]"
     }
 ];
 
-let entries = JSON.parse(localStorage.getItem('schulhub_data')) || defaultData;
+let entries = JSON.parse(localStorage.getItem('argon_data')) || defaultData;
 let currentSubject = 'alle';
 let searchQuery = '';
 
@@ -56,7 +56,7 @@ const entryForm = document.getElementById('entry-form');
 const entryIdInput = document.getElementById('entry-id');
 
 function saveData() {
-    localStorage.setItem('schulhub_data', JSON.stringify(entries));
+    localStorage.setItem('argon_data', JSON.stringify(entries));
 }
 
 function renderEntries() {
@@ -106,9 +106,21 @@ function renderEntries() {
             card.innerHTML = `
                 ${headerHTML}
                 <div class="card-back" style="font-weight: 600;">${item.back}</div>
-                <div class="formula-box">${item.front}</div>
+                <div class="formula-box" id="formula-${item.id}"></div>
                 <div class="card-details">${item.details}</div>
             `;
+            
+            // KaTeX LaTeX-Formel rendern
+            setTimeout(() => {
+                const formulaEl = document.getElementById(`formula-${item.id}`);
+                if (formulaEl && window.katex) {
+                    try {
+                        katex.render(item.front, formulaEl, { displayMode: true, throwOnError: false });
+                    } catch (err) {
+                        formulaEl.textContent = item.front; // Fallback falls Syntaxfehler
+                    }
+                }
+            }, 0);
         }
 
         card.querySelector('.edit-btn').addEventListener('click', () => openEditModal(item));
@@ -187,17 +199,16 @@ searchInput.addEventListener('input', (e) => {
     renderEntries();
 });
 
-// Auto-Update für Service Worker erzwingen
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('./sw.js').then((reg) => {
-        reg.update(); // Aktiv nach neuem SW suchen
+        reg.update();
     });
 
     let refreshing = false;
     navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (!refreshing) {
             refreshing = true;
-            window.location.reload(); // Seite automatisch neu laden, sobald Update aktiv ist
+            window.location.reload();
         }
     });
 }
