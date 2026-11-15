@@ -15,24 +15,16 @@
     <header>
         <div class="header-top">
             <div class="title-group">
-                <h1>⚡ Argon</h1>
-                <span class="version-badge">V.1.0.3</span>
+                <h1 id="app-title" style="cursor: pointer;">⚡ Argon</h1>
+                <span class="version-badge">V.1.0.4</span>
             </div>
             <button id="add-btn" class="primary-btn">+ Neu</button>
         </div>
         <input type="text" id="search-input" placeholder="Nach Vokabel, Formel oder Thema suchen...">
-        
-        <nav class="subject-tabs" id="subject-tabs">
-            <button class="tab active" data-subject="alle">Alle</button>
-            <button class="tab" data-subject="griechisch">🏛️ Griechisch</button>
-            <button class="tab" data-subject="mathe">📐 Mathe</button>
-            <button class="tab" data-subject="physik">⚡ Physik</button>
-            <button class="tab" data-subject="chemie">🧪 Chemie</button>
-        </nav>
     </header>
 
-    <main id="content-grid" class="content-grid">
-        <!-- Inhalte werden per JavaScript geladen -->
+    <main id="main-container">
+        <!-- Entweder Fächer-Kacheln (Startseite) oder die Karten-Ansicht eines Faches -->
     </main>
 
     <!-- Modal zum Hinzufügen & Bearbeiten von Einträgen -->
@@ -59,15 +51,15 @@
                 </label>
 
                 <label>Vorderseite / Formel / Wort:
-                    <input type="text" id="entry-front" placeholder="z. B. \frac{-p}{2} \pm \sqrt{(\frac{p}{2})^2 - q}" required>
+                    <input type="text" id="entry-front" required>
                 </label>
 
                 <label>Rückseite / Übersetzung / Bedeutung:
-                    <input type="text" id="entry-back" placeholder="z. B. p-q-Formel" required>
+                    <input type="text" id="entry-back" required>
                 </label>
 
                 <label>Zusatzinfo (Stammformen, Variablen, Thema):
-                    <textarea id="entry-details" rows="2" placeholder="z. B. p = Koeffizient, q = Konstante..."></textarea>
+                    <textarea id="entry-details" rows="2"></textarea>
                 </label>
 
                 <div class="modal-actions">

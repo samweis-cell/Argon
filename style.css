@@ -2,7 +2,7 @@
     --bg: #0f172a;
     --card-bg: #1e293b;
     --card-hover: #273549;
-    --primary: #06b6d4; /* Argon-Cyan */
+    --primary: #06b6d4;
     --primary-hover: #0891b2;
     --danger: #ef4444;
     --text: #f8fafc;
@@ -71,7 +71,6 @@ h1 {
     background-color: var(--card-bg);
     color: var(--text);
     font-size: 1rem;
-    margin-bottom: 12px;
     outline: none;
 }
 
@@ -79,35 +78,70 @@ h1 {
     border-color: var(--primary);
 }
 
-.subject-tabs {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
+/* Fächer-Kacheln (Startseite) */
+.subject-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
-.subject-tabs::-webkit-scrollbar {
-    display: none;
-}
-
-.tab {
+.subject-tile {
     background-color: var(--card-bg);
-    color: var(--text-muted);
     border: 1px solid var(--border);
-    padding: 8px 14px;
     border-radius: 20px;
-    font-size: 0.9rem;
-    white-space: nowrap;
+    padding: 24px;
+    text-align: center;
     cursor: pointer;
     transition: all 0.2s;
 }
 
-.tab.active {
-    background-color: var(--primary);
-    color: #0f172a;
+.subject-tile:hover {
+    background-color: var(--card-hover);
     border-color: var(--primary);
-    font-weight: 700;
+    transform: translateY(-3px);
+}
+
+.subject-tile .icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+}
+
+.subject-tile h2 {
+    font-size: 1.2rem;
+    margin-bottom: 6px;
+    color: var(--text);
+}
+
+.subject-tile p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Ansicht innerhalb eines Faches */
+.subject-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px 0 16px;
+}
+
+.back-btn {
+    background-color: var(--card-bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.back-btn:hover {
+    border-color: var(--primary);
 }
 
 .content-grid {
