@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SchulHub – Meine Sammlung</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+    <header>
+        <div class="header-top">
+            <h1>📚 SchulHub</h1>
+            <button id="add-btn" class="primary-btn">+ Neu</button>
+        </div>
+        <input type="text" id="search-input" placeholder="Nach Vokabel, Formel oder Thema suchen...">
+        
+        <nav class="subject-tabs" id="subject-tabs">
+            <button class="tab active" data-subject="alle">Alle</button>
+            <button class="tab" data-subject="griechisch">🏛️ Griechisch</button>
+            <button class="tab" data-subject="mathe">📐 Mathe</button>
+            <button class="tab" data-subject="physik">⚡ Physik</button>
+            <button class="tab" data-subject="chemie">🧪 Chemie</button>
+        </nav>
+    </header>
+
+    <main id="content-grid" class="content-grid">
+        <!-- Inhalte werden per JavaScript geladen -->
+    </main>
+
+    <!-- Modal zum Hinzufügen neuer Einträge -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Neuer Eintrag</h2>
+            <form id="entry-form">
+                <label>Fach:
+                    <select id="entry-subject" required>
+                        <option value="griechisch">🏛️ Griechisch</option>
+                        <option value="mathe">📐 Mathe</option>
+                        <option value="physik">⚡ Physik</option>
+                        <option value="chemie">🧪 Chemie</option>
+                    </select>
+                </label>
+
+                <label>Typ:
+                    <select id="entry-type" required>
+                        <option value="vocab">Vokabel (Karteikarte)</option>
+                        <option value="formula">Formel / Regel</option>
+                    </select>
+                </label>
+
+                <label>Vorderseite / Formel / Wort:
+                    <input type="text" id="entry-front" placeholder="z. B. λόγος oder E = m · c²" required>
+                </label>
+
+                <label>Rückseite / Übersetzung / Bedeutung:
+                    <input type="text" id="entry-back" placeholder="z. B. Wort, Vernunft oder Energie-Masse-Äquivalenz" required>
+                </label>
+
+                <label>Zusatzinfo (Stammformen, Variablen, Thema):
+                    <textarea id="entry-details" rows="2" placeholder="z. B. Genitiv: τοῦ λόγου / E = Energie, m = Masse..."></textarea>
+                </label>
+
+                <div class="modal-actions">
+                    <button type="button" id="close-modal" class="secondary-btn">Abbrechen</button>
+                    <button type="submit" class="primary-btn">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
